@@ -15,7 +15,12 @@
     "import/prefer-default-export": "off",
     "import/no-unresolved": "off",
     "import/extensions": ["error", { "ts": "never" }],
-    "@typescript-eslint/no-unused-vars": ["error"],
-    "no-unused-vars": "off"
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      { "argsIgnorePattern": "next" }
+    ],
+    "@typescript-eslint/no-shadow": "error",
+    "no-unused-vars": "off",
+    "no-shadow": "off"
   }
 }
