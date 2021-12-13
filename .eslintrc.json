@@ -21,6 +21,10 @@
     ],
     "@typescript-eslint/no-shadow": "error",
     "no-unused-vars": "off",
-    "no-shadow": "off"
+    "no-shadow": "off",
+    "lines-between-class-members": "off",
+    "no-useless-constructor": "off",
+    "no-empty-function": "off",
+    "camelcase": "off"
   }
 }
