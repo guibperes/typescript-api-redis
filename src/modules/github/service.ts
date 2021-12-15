@@ -1,4 +1,4 @@
-import { redis, logger } from '@/libs';
+import { redis } from '@/libs';
 
 import { GithubRepository } from './entity';
 import * as repository from './repository';
@@ -6,18 +6,14 @@ import * as repository from './repository';
 export const getRepositories = async (
   username: string,
 ): Promise<GithubRepository[]> => {
-  logger.info('Getting cache from redis');
-  const cachedData = await redis.get(username);
+  const cachedData = await redis.getJSON<GithubRepository[]>(username);
 
   if (cachedData) {
-    logger.info('Cache index founded on redis');
-    return JSON.parse(cachedData);
+    return cachedData;
   }
 
-  logger.info('Cache index not founded on redis, calling Github API');
   const data = await repository.getRepositories(username);
 
-  logger.info('Setting index data on redis');
-  await redis.setex(username, 60, JSON.stringify(data));
+  await redis.setJSON(username, 60, data);
   return data;
 };
