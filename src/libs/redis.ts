@@ -1,10 +1,11 @@
 import Redis from 'ioredis';
 
+import { env } from '../config';
 import { logger } from './logger';
 
 const redis = new Redis({
-  host: 'localhost',
-  port: 6379,
+  host: env.REDIS_HOST,
+  port: env.REDIS_PORT,
   db: 0,
   lazyConnect: true,
 });
