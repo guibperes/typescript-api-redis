@@ -10,4 +10,5 @@ export const env = {
   REDIS_HOST: envToString('REDIS_HOST'),
   REDIS_PORT: Number.parseInt(envToString('REDIS_PORT')),
   GITHUB_TOKEN: envToString('GITHUB_TOKEN'),
+  CACHE_IMPLEMENTATION: envToString('CACHE_IMPLEMENTATION', 'NO_CACHE'),
 };

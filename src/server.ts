@@ -2,13 +2,15 @@ import http from 'http';
 import express from 'express';
 import cors from 'cors';
 
-import { logger, loggerMiddleware, redis } from './libs';
+import { logger, loggerMiddleware } from './libs';
+import { getCacheRepository } from './databases';
 import { notFoundMiddleware, errorMiddleware } from './errors';
 import { env } from './config';
 import { router } from './routes';
 
 const app = express();
 const server = http.createServer(app);
+const cacheRepository = getCacheRepository();
 
 app.use(express.json());
 app.use(cors());
@@ -21,7 +23,7 @@ export const start = async () => {
   try {
     logger.info('Server startup process started');
 
-    await redis.connect();
+    await cacheRepository.connect();
 
     server.listen(env.HTTP_PORT, () =>
       logger.info(`HTTP Server started on port ${env.HTTP_PORT}`),
@@ -40,7 +42,7 @@ export const shutdown = async () => {
   try {
     logger.info('Server shutdown process started');
 
-    await redis.disconnect();
+    await cacheRepository.disconnect();
 
     logger.info('Closing HTTP Server');
     server.close();

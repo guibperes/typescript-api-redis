@@ -1,12 +1,16 @@
-import { redis } from '@/libs';
+import { getCacheRepository } from '@/databases';
 
 import { GithubRepository } from './entity';
 import * as repository from './repository';
 
+const cacheRepository = getCacheRepository();
+
 export const getRepositories = async (
   username: string,
 ): Promise<GithubRepository[]> => {
-  const cachedData = await redis.getJSON<GithubRepository[]>(username);
+  const cachedData = await cacheRepository.getJSON<GithubRepository[]>(
+    username,
+  );
 
   if (cachedData) {
     return cachedData;
@@ -14,6 +18,6 @@ export const getRepositories = async (
 
   const data = await repository.getRepositories(username);
 
-  await redis.setJSON(username, 60, data);
+  await cacheRepository.setJSON(username, 60, data);
   return data;
 };

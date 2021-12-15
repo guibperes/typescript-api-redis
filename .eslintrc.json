@@ -26,6 +26,8 @@
     "no-useless-constructor": "off",
     "no-empty-function": "off",
     "camelcase": "off",
-    "radix": "off"
+    "radix": "off",
+    "class-methods-use-this": "off",
+    "no-use-before-define": "off"
   }
 }
