@@ -1,20 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { injectable } from 'inversify';
 
 import { CacheRepository } from './repository';
 
+@injectable()
 export class NoCacheRepository implements CacheRepository {
-  private static instance: NoCacheRepository;
-
-  private constructor() {}
-
-  static getInstance() {
-    if (!this.instance) {
-      this.instance = new NoCacheRepository();
-    }
-
-    return this.instance;
-  }
-
   async connect(): Promise<void> {}
 
   async disconnect(): Promise<void> {}

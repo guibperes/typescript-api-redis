@@ -11,7 +11,7 @@ export enum CacheStrategy {
 export const getCacheRepository = (): CacheRepository => {
   const strategy: CacheStrategy = CacheStrategy[env.CACHE_IMPLEMENTATION];
 
-  if (strategy === CacheStrategy.REDIS) return RedisRepository.getInstance();
+  if (strategy === CacheStrategy.REDIS) return new RedisRepository();
 
-  return NoCacheRepository.getInstance();
+  return new NoCacheRepository();
 };

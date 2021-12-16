@@ -7,22 +7,12 @@ import { CacheRepository } from './repository';
 
 @injectable()
 export class RedisRepository implements CacheRepository {
-  private static instance: RedisRepository;
-
   private redis = new Redis({
     host: env.REDIS_HOST,
     port: env.REDIS_PORT,
     db: 0,
     lazyConnect: true,
   });
-
-  static getInstance() {
-    if (!this.instance) {
-      this.instance = new RedisRepository();
-    }
-
-    return this.instance;
-  }
 
   async connect(): Promise<void> {
     try {

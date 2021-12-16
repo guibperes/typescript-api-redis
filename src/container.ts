@@ -1,7 +1,7 @@
 import { Container } from 'inversify';
 
 import { logger } from '@/libs';
-import { CacheRepository, RedisRepository } from './databases';
+import { CacheRepository, getCacheRepository } from './databases';
 import { GithubRepository, GithubService } from './modules';
 
 export const bootstrap = (): Container => {
@@ -10,7 +10,10 @@ export const bootstrap = (): Container => {
 
   container.bind(GithubRepository).toSelf().inSingletonScope();
   container.bind(GithubService).toSelf().inSingletonScope();
-  container.bind<CacheRepository>('CacheRepository').to(RedisRepository);
+  container
+    .bind<CacheRepository>('CacheRepository')
+    .toDynamicValue(() => getCacheRepository())
+    .inSingletonScope();
 
   logger.info('Bootstraping application to container finished');
   return container;
