@@ -19,7 +19,7 @@ export class GithubRepository {
       headers: { Authorization: `token ${env.GITHUB_TOKEN}` },
     });
 
-    this.logger.trace('Data found on Github API', response);
+    this.logger.trace('Data found on Github API', response.data);
     this.logger.debug('Mapping data to GithubRepositories entity');
     const repositories = response.data.map(({ id, name, full_name }) => ({
       id,

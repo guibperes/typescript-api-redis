@@ -6,8 +6,8 @@ import { env } from '@/config';
 import { Logger } from './logger';
 
 enum LoggerLevel {
-  error = 10,
-  trace = 20,
+  trace = 10,
+  error = 20,
   debug = 30,
   info = 40,
 }
@@ -19,11 +19,13 @@ export class PinoLogger implements Logger {
     levelVal: LoggerLevel[env.LOGGER_LEVEL],
     useOnlyCustomLevels: true,
     customLevels: {
-      error: 10,
-      trace: 20,
+      trace: 10,
+      error: 20,
       debug: 30,
       info: 40,
     },
+    messageKey: 'message',
+    timestamp: pino.stdTimeFunctions.isoTime,
     formatters: { level: label => ({ level: label }) },
     redact: {
       remove: true,
@@ -48,7 +50,7 @@ export class PinoLogger implements Logger {
   }
 
   trace(message: string, data: object): void {
-    this.pino.trace(message, data);
+    this.pino.trace(`${message} - ${JSON.stringify(data)}`);
   }
 
   error(data: object): void {
