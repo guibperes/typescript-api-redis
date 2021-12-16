@@ -9,6 +9,8 @@ import { notFoundMiddleware, errorMiddleware } from './errors';
 import { env } from './config';
 import { bootstrap } from './container';
 
+import './modules';
+
 const container = bootstrap();
 const application = new InversifyExpressServer(container)
   .setConfig(app => {
