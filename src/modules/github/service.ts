@@ -1,23 +1,29 @@
-import { getCacheRepository } from '@/databases';
+import { injectable, inject } from 'inversify';
 
-import { GithubRepository } from './entity';
-import * as repository from './repository';
+import { CacheRepository } from '@/databases';
+import { GithubRepositories } from './entity';
+import { GithubRepository } from './repository';
 
-const cacheRepository = getCacheRepository();
+@injectable()
+export class GithubService {
+  @inject(GithubRepository)
+  private readonly githubRepository: GithubRepository;
 
-export const getRepositories = async (
-  username: string,
-): Promise<GithubRepository[]> => {
-  const cachedData = await cacheRepository.getJSON<GithubRepository[]>(
-    username,
-  );
+  @inject('CacheRepository')
+  private readonly cacheRepository: CacheRepository;
 
-  if (cachedData) {
-    return cachedData;
+  async getRepositories(username: string): Promise<GithubRepositories[]> {
+    const cachedData = await this.cacheRepository.getJSON<GithubRepositories[]>(
+      username,
+    );
+
+    if (cachedData) {
+      return cachedData;
+    }
+
+    const data = await this.githubRepository.getRepositories(username);
+
+    await this.cacheRepository.setJSON(username, 60, data);
+    return data;
   }
-
-  const data = await repository.getRepositories(username);
-
-  await cacheRepository.setJSON(username, 60, data);
-  return data;
-};
+}

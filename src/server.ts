@@ -1,23 +1,26 @@
 import http from 'http';
 import express from 'express';
 import cors from 'cors';
+import { InversifyExpressServer } from 'inversify-express-utils';
 
 import { logger, loggerMiddleware } from './libs';
-import { getCacheRepository } from './databases';
-import { notFoundMiddleware, errorMiddleware } from './errors';
+import { CacheRepository } from './databases';
+import { errorMiddleware } from './errors';
 import { env } from './config';
-import { router } from './routes';
+import { bootstrap } from './container';
 
-const app = express();
-const server = http.createServer(app);
-const cacheRepository = getCacheRepository();
+const container = bootstrap();
+const application = new InversifyExpressServer(container)
+  .setConfig(app => {
+    app.use(express.json());
+    app.use(cors());
+    app.use(loggerMiddleware);
+  })
+  .setErrorConfig(app => app.use(errorMiddleware))
+  .build();
 
-app.use(express.json());
-app.use(cors());
-app.use(loggerMiddleware);
-app.use(router);
-app.use('*', notFoundMiddleware);
-app.use(errorMiddleware);
+const server = http.createServer(application);
+const cacheRepository = container.get<CacheRepository>('CacheRepository');
 
 export const start = async () => {
   try {

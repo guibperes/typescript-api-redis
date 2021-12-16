@@ -1,9 +1,11 @@
+import { injectable } from 'inversify';
 import Redis from 'ioredis';
 
 import { env } from '@/config';
 import { logger } from '@/libs';
 import { CacheRepository } from './repository';
 
+@injectable()
 export class RedisRepository implements CacheRepository {
   private static instance: RedisRepository;
 
@@ -13,8 +15,6 @@ export class RedisRepository implements CacheRepository {
     db: 0,
     lazyConnect: true,
   });
-
-  private constructor() {}
 
   static getInstance() {
     if (!this.instance) {

@@ -1,14 +1,17 @@
-import { Router } from 'express';
+import { controller, httpGet, requestParam } from 'inversify-express-utils';
+import { inject } from 'inversify';
 
-import * as service from './service';
+import { GithubService } from './service';
 
-const githubController = Router();
+@controller('/github')
+export class GithubController {
+  @inject(GithubService)
+  private readonly githubService: GithubService;
 
-githubController.get('/:username/repos', async (req, res) => {
-  const { username } = req.params;
-  const response = await service.getRepositories(username);
+  @httpGet('/:username/repos')
+  async getRepositories(@requestParam('username') username: string) {
+    const response = await this.githubService.getRepositories(username);
 
-  return res.json(response);
-});
-
-export { githubController };
+    return response;
+  }
+}
