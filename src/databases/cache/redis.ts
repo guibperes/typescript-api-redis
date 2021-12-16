@@ -44,22 +44,25 @@ export class RedisRepository implements CacheRepository {
   }
 
   async getJSON<T>(key: string): Promise<T | null> {
-    this.logger.info('Getting cache from redis');
+    this.logger.debug('Getting cache from redis');
+    this.logger.trace('Index key value', { key });
     const data = await this.redis.get(key);
 
     if (data) {
-      this.logger.info('Cache index founded on redis');
+      this.logger.debug('Cache index founded on redis');
+      this.logger.trace('Index value data', { data });
       return JSON.parse(data);
     }
 
-    this.logger.info('Cache index not founded on redis');
+    this.logger.debug('Cache index not founded on redis');
     return null;
   }
 
   async setJSON<T>(index: string, seconds: number, value: T): Promise<void> {
     const valueString = JSON.stringify(value);
 
-    this.logger.info('Setting index data on redis');
+    this.logger.debug('Setting index data on redis');
+    this.logger.trace('Index value and data value', { index, value });
     await this.redis.setex(index, seconds, valueString);
   }
 }

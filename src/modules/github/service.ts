@@ -18,7 +18,6 @@ export class GithubService {
 
   async getRepositories(username: string): Promise<GithubRepositories[]> {
     this.logger.debug('Starting GithubService.getRepositories');
-    this.logger.trace('Calling redis index with data', { username });
     const cachedData = await this.cacheRepository.getJSON<GithubRepositories[]>(
       username,
     );
