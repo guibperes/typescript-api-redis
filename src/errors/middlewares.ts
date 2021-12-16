@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
 import { HttpStatus } from '../libs';
-import { ApiError } from './ApiError';
+import { ApiError } from './apiError';
 
 const sendError = (res: Response, error: ApiError) => {
   const { message } = error;

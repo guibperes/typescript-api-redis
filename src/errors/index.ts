@@ -1,2 +1,2 @@
-export * from './ApiError';
+export * from './apiError';
 export * from './middlewares';
