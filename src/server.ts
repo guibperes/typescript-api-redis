@@ -5,7 +5,7 @@ import { InversifyExpressServer } from 'inversify-express-utils';
 
 import { logger, loggerMiddleware } from './libs';
 import { CacheRepository } from './databases';
-import { errorMiddleware } from './errors';
+import { notFoundMiddleware, errorMiddleware } from './errors';
 import { env } from './config';
 import { bootstrap } from './container';
 
@@ -16,7 +16,10 @@ const application = new InversifyExpressServer(container)
     app.use(cors());
     app.use(loggerMiddleware);
   })
-  .setErrorConfig(app => app.use(errorMiddleware))
+  .setErrorConfig(app => {
+    app.use(notFoundMiddleware);
+    app.use(errorMiddleware);
+  })
   .build();
 
 const server = http.createServer(application);

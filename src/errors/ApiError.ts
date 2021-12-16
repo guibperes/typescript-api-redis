@@ -11,7 +11,7 @@ export class ApiError extends Error {
   getStatus() {
     return {
       name: HttpStatus[this.status],
-      status: this.status,
+      code: this.status,
     };
   }
 
