@@ -6,14 +6,13 @@ import { GithubRepository, GithubService } from './modules';
 
 export const bootstrap = (): Container => {
   logger.info('Bootstraping application to container');
-  const container = new Container();
+  const container = new Container({ defaultScope: 'Singleton' });
 
-  container.bind(GithubRepository).toSelf().inSingletonScope();
-  container.bind(GithubService).toSelf().inSingletonScope();
+  container.bind(GithubRepository).toSelf();
+  container.bind(GithubService).toSelf();
   container
     .bind<CacheRepository>('CacheRepository')
-    .toDynamicValue(() => getCacheRepository())
-    .inSingletonScope();
+    .toDynamicValue(getCacheRepository);
 
   logger.info('Bootstraping application to container finished');
   return container;
