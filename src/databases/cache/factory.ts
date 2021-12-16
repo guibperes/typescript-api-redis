@@ -11,7 +11,12 @@ export enum CacheStrategy {
 export const getCacheRepository = (): CacheRepository => {
   const strategy: CacheStrategy = CacheStrategy[env.CACHE_IMPLEMENTATION];
 
-  if (strategy === CacheStrategy.REDIS) return new RedisRepository();
-
-  return new NoCacheRepository();
+  switch (strategy) {
+    case CacheStrategy.REDIS:
+      return new RedisRepository();
+    case CacheStrategy.NO_CACHE:
+      return new NoCacheRepository();
+    default:
+      throw new Error('Invalid cache implementation value');
+  }
 };
