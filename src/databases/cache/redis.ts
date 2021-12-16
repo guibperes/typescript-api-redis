@@ -2,12 +2,15 @@ import { injectable } from 'inversify';
 import Redis from 'ioredis';
 
 import { env } from '@/config';
-import { logger } from '@/libs';
+import { Logger } from '@/libs';
+import { getContainer } from '@/container';
 import { CacheRepository } from './repository';
 
 @injectable()
 export class RedisRepository implements CacheRepository {
-  private redis = new Redis({
+  private readonly logger = getContainer().get<Logger>('Logger');
+
+  private readonly redis = new Redis({
     host: env.REDIS_HOST,
     port: env.REDIS_PORT,
     db: 0,
@@ -16,12 +19,12 @@ export class RedisRepository implements CacheRepository {
 
   async connect(): Promise<void> {
     try {
-      logger.info('Connecting on redis database');
+      this.logger.info('Connecting on redis database');
       await this.redis.connect();
-      logger.info('Redis database connected');
+      this.logger.info('Redis database connected');
     } catch (error) {
-      logger.info('Cannot connect on redis database');
-      logger.error(error);
+      this.logger.info('Cannot connect on redis database');
+      this.logger.error(error);
 
       process.exit(1);
     }
@@ -29,34 +32,34 @@ export class RedisRepository implements CacheRepository {
 
   async disconnect(): Promise<void> {
     try {
-      logger.info('Disconnecting on redis database');
+      this.logger.info('Disconnecting on redis database');
       this.redis.disconnect();
-      logger.info('Redis database disconnected');
+      this.logger.info('Redis database disconnected');
     } catch (error) {
-      logger.info('Cannot disconnect on redis database');
-      logger.error(error);
+      this.logger.info('Cannot disconnect on redis database');
+      this.logger.error(error);
 
       process.exit(1);
     }
   }
 
   async getJSON<T>(key: string): Promise<T | null> {
-    logger.info('Getting cache from redis');
+    this.logger.info('Getting cache from redis');
     const data = await this.redis.get(key);
 
     if (data) {
-      logger.info('Cache index founded on redis');
+      this.logger.info('Cache index founded on redis');
       return JSON.parse(data);
     }
 
-    logger.info('Cache index not founded on redis');
+    this.logger.info('Cache index not founded on redis');
     return null;
   }
 
   async setJSON<T>(index: string, seconds: number, value: T): Promise<void> {
     const valueString = JSON.stringify(value);
 
-    logger.info('Setting index data on redis');
+    this.logger.info('Setting index data on redis');
     await this.redis.setex(index, seconds, valueString);
   }
 }

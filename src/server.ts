@@ -3,20 +3,24 @@ import express from 'express';
 import cors from 'cors';
 import { InversifyExpressServer } from 'inversify-express-utils';
 
-import { logger, loggerMiddleware } from './libs';
+import { Logger } from './libs';
 import { CacheRepository } from './databases';
 import { notFoundMiddleware, errorMiddleware } from './errors';
 import { env } from './config';
-import { bootstrap } from './container';
+import { getContainer } from './container';
 
 import './modules';
 
-const container = bootstrap();
+const container = getContainer();
+
+const logger = container.get<Logger>('Logger');
+const cacheRepository = container.get<CacheRepository>('CacheRepository');
+
 const application = new InversifyExpressServer(container)
   .setConfig(app => {
     app.use(express.json());
     app.use(cors());
-    app.use(loggerMiddleware);
+    app.use(logger.getMiddleware());
   })
   .setErrorConfig(app => {
     app.use(notFoundMiddleware);
@@ -25,7 +29,6 @@ const application = new InversifyExpressServer(container)
   .build();
 
 const server = http.createServer(application);
-const cacheRepository = container.get<CacheRepository>('CacheRepository');
 
 export const start = async () => {
   try {
